@@ -27,7 +27,7 @@ public class CenaAbertura extends AGScene {
         tempo = new AGTimer(3000);
 
         //Musica longa
-        AGSoundManager.vrMusic.loadMusic("oest.mp3", true);
+        AGSoundManager.vrMusic.loadMusic("oeste.mp3", true);
         AGSoundManager.vrMusic.play();
 
         setSceneBackgroundColor(132, 108, 38);

@@ -1,12 +1,21 @@
 package com.example.kleber.gamefaroeste;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+
 import com.example.kleber.gamefaroeste.AndGraph.AGGameManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGInputManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGScene;
 import com.example.kleber.gamefaroeste.AndGraph.AGScreenManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGSoundManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGSprite;
+import com.example.kleber.gamefaroeste.AndGraph.AGTouchScreen;
+
+import java.util.IllegalFormatCodePointException;
 
 //UMA CENA DA APLICACAO
 public class CenaPlay extends AGScene {
@@ -34,6 +43,8 @@ public class CenaPlay extends AGScene {
     private AGSprite passaro = null;
     private float posXPassaro = AGScreenManager.iScreenWidth;
 
+    //------------------- BTN PAUSE
+    private AGSprite pause = null;
 
     public CenaPlay(AGGameManager pManager) {
         super(pManager);
@@ -48,13 +59,20 @@ public class CenaPlay extends AGScene {
         somTiro = AGSoundManager.vrSoundEffects.loadSoundEffect("tiro.mp3");
 
         //DESLIGA MUSICA DO MENU
-        AGSoundManager.vrMusic.stop();
+        AGSoundManager.vrMusic.pause();
 
         //CARREGA BACKGROUND
         bg = createSprite(R.mipmap.bg, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+
+        //CARREGA BTN PAUSE
+        pause = createSprite(R.mipmap.pause, 1, 1);
+        pause.setScreenPercent(10, 10);
+        pause.vrPosition.setX(AGScreenManager.iScreenWidth * 0.95f);
+        pause.vrPosition.setY(AGScreenManager.iScreenHeight * 0.90f);
+
 
         //CARREGA CAWBOY
         cowboy = createSprite(R.mipmap.cowboy, 14, 1);
@@ -75,7 +93,7 @@ public class CenaPlay extends AGScene {
         tiro.vrPosition.setX(posXTiro);
         tiro.vrPosition.setY(posYCowboy + posYCowboy / 3);
         tiro.iMirror = AGSprite.HORIZONTAL;
-//        tiro.getCurrentAnimation().release();
+        tiro.bVisible = false;
 
         //CARREGA PASSARO INIMIGO
         passaro = createSprite(R.mipmap.passaro, 5, 1);
@@ -103,6 +121,13 @@ public class CenaPlay extends AGScene {
     @Override
     public void loop() {
 
+        //APERTOU O BTN PAUSE
+        if (pause.collide(AGInputManager.vrTouchEvents.getLastPosition())){
+            vrGameManager.setCurrentScene(1);
+            return;
+        }
+
+
         //TERMINOU DE DAR O TIRO
         if (cowboy.getCurrentAnimation().isAnimationEnded())
             cowboy.setCurrentAnimation(0);
@@ -118,9 +143,8 @@ public class CenaPlay extends AGScene {
             if (b > a) {
                 AGSoundManager.vrSoundEffects.play(somTiro);
                 cowboy.setCurrentAnimation(1);
-                tiro.vrPosition.setX(posXCowboy + posXCowboy / 2);
+                tiro.vrPosition.setX(posXCowboy + posXCowboy / 2 );
                 tiro.bVisible = true;
-//                tiro.reloadTexture(AGGameManager.vrOpenGL);
             } else {
                 //CLICOU NA ESQUERDA
                 AGSoundManager.vrSoundEffects.play(codigoDoSom);
@@ -155,17 +179,24 @@ public class CenaPlay extends AGScene {
 
         }
 
+
+
         //ANDAR PASSARO INIMIGO
-        posXPassaro--;
+        posXPassaro-=3;
         if (posXPassaro <= 0)
             posXPassaro = AGScreenManager.iScreenWidth;
         passaro.vrPosition.setX(posXPassaro);
 
         //ANDAR TIRO
-        posXTiro++;
+        posXTiro+=5;
         tiro.vrPosition.setX(posXTiro);
         if (tiro.collide(passaro)){
-            passaro.release();
+            passaro.bVisible = false;
+            tiro.bVisible = false;
         }
+
+
     }
+
 }
+

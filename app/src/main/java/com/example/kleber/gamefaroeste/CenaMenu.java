@@ -5,6 +5,7 @@ import com.example.kleber.gamefaroeste.AndGraph.AGGameManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGInputManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGScene;
 import com.example.kleber.gamefaroeste.AndGraph.AGScreenManager;
+import com.example.kleber.gamefaroeste.AndGraph.AGSoundManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGSprite;
 
 //UMA CENA DA APLICACAO
@@ -25,6 +26,9 @@ public class CenaMenu extends AGScene {
     @Override
     public void init() {
 
+        //LIGA MUSICA DO MENU
+        AGSoundManager.vrMusic.play();
+
         bg = createSprite(R.mipmap.bgmenu, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
@@ -35,25 +39,27 @@ public class CenaMenu extends AGScene {
         logo.vrPosition.setX(AGScreenManager.iScreenWidth / 1.5f);
         logo.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
 
-        play = createSprite(R.mipmap.play, 1, 1);
-        play.setScreenPercent(30, 25);
-        play.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        play = createSprite(R.mipmap.btn_play, 1, 1);
+        play.setScreenPercent(25, 15);
+        play.vrPosition.setX(AGScreenManager.iScreenWidth * 0.7f);
         play.vrPosition.setY(AGScreenManager.iScreenHeight * 0.5f);
 
-        sobre = createSprite(R.mipmap.duvida, 1, 1);
-        sobre.setScreenPercent(25, 25);
-        sobre.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        sobre = createSprite(R.mipmap.btn_about, 1, 1);
+        sobre.setScreenPercent(25, 15);
+        sobre.vrPosition.setX(AGScreenManager.iScreenWidth * 0.7f);
         sobre.vrPosition.setY(AGScreenManager.iScreenHeight * 0.3f);
 
-        sair = createSprite(R.mipmap.sair, 1, 1);
-        sair.setScreenPercent(25, 25);
-        sair.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        sair = createSprite(R.mipmap.btn_exit, 1, 1);
+        sair.setScreenPercent(25, 15);
+        sair.vrPosition.setX(AGScreenManager.iScreenWidth * 0.7f);
         sair.vrPosition.setY(AGScreenManager.iScreenHeight * 0.1f);
     }
 
     //APOS O RETORNO DE UMA INTERRUPCAO
     @Override
     public void restart() {
+        //LIGA MUSICA DO MENU
+        AGSoundManager.vrMusic.play();
     }
 
     //QUANDO UM INTERRUPCAO OCERRER
