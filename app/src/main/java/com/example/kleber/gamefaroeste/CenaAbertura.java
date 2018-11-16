@@ -13,6 +13,7 @@ public class CenaAbertura extends AGScene {
 
     AGTimer tempo = null;
     AGSprite pantera = null;
+    AGSprite load = null;
 
 
     public CenaAbertura(AGGameManager pManager) {
@@ -24,29 +25,29 @@ public class CenaAbertura extends AGScene {
     @Override
     public void init() {
 
-        tempo = new AGTimer(3000);
+        //TEMPO DE DURACAO
+        tempo = new AGTimer(5000);
 
-        //Musica longa
+        //MUSICA
         AGSoundManager.vrMusic.loadMusic("oeste.mp3", true);
         AGSoundManager.vrMusic.play();
 
-        setSceneBackgroundColor(132, 108, 38);
+        //BACKGRAUD COLOR
+        setSceneBackgroundColor(0.255f, 0, 0);
 
+        //PANTERA
         pantera = createSprite(R.mipmap.pantera, 2, 4);
-        pantera.setScreenPercent(40, 15);
-
-        //CONFIGURA O CENTRO DO OBJETO
+        pantera.setScreenPercent(30, 30);
         pantera.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
-        pantera.vrPosition.setY(AGScreenManager.iScreenHeight /2);
+        pantera.vrPosition.setY(AGScreenManager.iScreenHeight * 0.7f);
+        pantera.addAnimation(30, true, 0, 7);
 
-        //quantidade de quadros trocados por segundo
-        //voltar para o primeiro?
-        //frame inicial
-        //frame final
-        pantera.addAnimation(20, true, 0, 7);
-
-        //espelhamento
-        //pantera.iMirror = AGSprite.HORIZONTAL;//espelhamento horizontal
+        //LOAD
+        load = createSprite(R.mipmap.load, 12, 4);
+        load.setScreenPercent(10, 10);
+        load.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        load.vrPosition.setY(AGScreenManager.iScreenHeight * 0.2f);
+        load.addAnimation(40, true, 0, 47);
     }
 
     //APOS O RETORNO DE UMA INTERRUPCAO
@@ -64,9 +65,8 @@ public class CenaAbertura extends AGScene {
     public void loop() {
 
 //        tempo.update();
-
+//
 //        if (tempo.isTimeEnded()) {
-            //TROCA A CENA
             vrGameManager.setCurrentScene(1);
 //        }
     }

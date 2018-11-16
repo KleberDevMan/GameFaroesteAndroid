@@ -11,11 +11,9 @@ import com.example.kleber.gamefaroeste.AndGraph.AGSprite;
 //UMA CENA DA APLICACAO
 public class CenaMenu extends AGScene {
 
-    AGSprite bg = null;
-    AGSprite logo = null;
-    AGSprite play = null;
-    AGSprite sobre = null;
-    AGSprite sair = null;
+    private AGSprite play = null;
+    private AGSprite sobre = null;
+    private AGSprite sair = null;
 
     public CenaMenu(AGGameManager pManager) {
         super(pManager);
@@ -29,12 +27,14 @@ public class CenaMenu extends AGScene {
         //LIGA MUSICA DO MENU
         AGSoundManager.vrMusic.play();
 
-        bg = createSprite(R.mipmap.bgmenu, 1, 1);
+        //CARREGA BACKGROUD
+        AGSprite bg = createSprite(R.mipmap.bgmenu, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
 
-        logo = createSprite(R.mipmap.logo, 1, 1);
+        //CARREGA LOGO
+        AGSprite logo = createSprite(R.mipmap.logo, 1, 1);
         logo.setScreenPercent(55, 45);
         logo.vrPosition.setX(AGScreenManager.iScreenWidth / 1.5f);
         logo.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
@@ -71,11 +71,6 @@ public class CenaMenu extends AGScene {
     @Override
     public void loop() {
         if (AGInputManager.vrTouchEvents.screenClicked()) {
-
-//            //ve se ouve colisão entre dois sprites
-//            if (play.collide(sair)){
-//                //faz alguma coisa
-//            }
 
             if (play.collide(AGInputManager.vrTouchEvents.getLastPosition())){
                 vrGameManager.setCurrentScene(2);

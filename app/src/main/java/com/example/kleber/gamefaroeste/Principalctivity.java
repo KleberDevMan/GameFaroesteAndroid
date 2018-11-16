@@ -11,6 +11,7 @@ public class Principalctivity extends AGActivityGame {
     private CenaMenu menu;
     private CenaPlay play;
     private CenaSobre sobre;
+    private CenaGameOver gameOver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +25,13 @@ public class Principalctivity extends AGActivityGame {
         menu = new CenaMenu(getGameManager());
         play = new CenaPlay(getGameManager());
         sobre = new CenaSobre(getGameManager());
+        gameOver = new CenaGameOver(getGameManager());
 
         //REGISTRA CENAS
         getGameManager().addScene(abertura);
         getGameManager().addScene(menu);
         getGameManager().addScene(play);
         getGameManager().addScene(sobre);
+        getGameManager().addScene(gameOver);
     }
 }
