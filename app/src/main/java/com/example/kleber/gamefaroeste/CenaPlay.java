@@ -18,6 +18,7 @@ import java.util.List;
 public class CenaPlay extends AGScene {
 
     private AGSprite bg;
+    private AGSprite bg2;
     private int somToqueNaTela;
     private int somTiro;
     private int somCorvo;
@@ -82,11 +83,16 @@ public class CenaPlay extends AGScene {
         posXPassaro = AGScreenManager.iScreenWidth;
         velocidadeVooPassaro = 9;
 
-        //CARREGA BACKGROUND
-        bg = createSprite(R.mipmap.bg, 1, 1);
+        //CARREGA BACKGROUND 1
+        bg = createSprite(R.mipmap.b1, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+        //CARREGA BACKGROUND 2
+        bg2 = createSprite(R.mipmap.b2, 1, 1);
+        bg2.setScreenPercent(200, 100);
+        bg2.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        bg2.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
 
         //CARREGA BTN PAUSE
         pause = createSprite(R.mipmap.pause, 1, 1);
@@ -175,6 +181,15 @@ public class CenaPlay extends AGScene {
     @Override
     public void loop() {
 
+        bg2.vrPosition.setX(bg2.vrPosition.getX() - 6);
+        if (bg2.vrPosition.getX() + (AGScreenManager.iScreenWidth / 10) <= 0){
+//            removeSprite(bg2);
+            bg2 = createSprite(R.mipmap.b2, 1, 1);
+            bg2.setScreenPercent(200, 100);
+            bg2.vrPosition.setX(AGScreenManager.iScreenWidth * 2 );
+            bg2.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+        }
+
         //COWBOY ESTA MORTO
         if (!cowboy.fadeEnded()){
 //            AGSoundManager.vrSoundEffects.play(somGameOver);
@@ -254,18 +269,11 @@ public class CenaPlay extends AGScene {
         if (passaro != null) {
             //PASSARO COLIDE COM COWBOY
             if (passaro.collide(cowboy)) {
-                removeSprite(passaro);
-                passaro = null;
-                cowboy.setCurrentAnimation(1);
-                AGSoundManager.vrSoundEffects.play(somGameOver);
-                cowboy.fadeOut(600);
-//                timeDead.update();
-//
-//                if (timeDead.isTimeEnded()){
-//                    vrGameManager.setCurrentScene(1);
-//                    return;
-//                }
-
+//                removeSprite(passaro);
+//                passaro = null;
+//                cowboy.setCurrentAnimation(1);
+//                AGSoundManager.vrSoundEffects.play(somGameOver);
+//                cowboy.fadeOut(600);
             } else {
                 posXPassaro -= velocidadeVooPassaro;
                 passaro.vrPosition.setX(posXPassaro);
