@@ -12,13 +12,15 @@ import com.example.kleber.gamefaroeste.AndGraph.AGSprite;
 import com.example.kleber.gamefaroeste.AndGraph.AGTimer;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 //UMA CENA DA APLICACAO
 public class CenaPlay extends AGScene {
 
     private AGSprite bg;
-    private AGSprite bg2;
+    private AGSprite backgroundCactos1;
+    private AGSprite backgroundCactos2;
     private int somToqueNaTela;
     private int somTiro;
     private int somCorvo;
@@ -46,6 +48,13 @@ public class CenaPlay extends AGScene {
     private int intervaloTempoQuePassaroAparece;
     private float velocidadeVooPassaro;
 
+    //------------------- OBSTACULO1
+    private AGSprite obstaculo1;
+    private float posXobstaculo1;
+    private int intervaloTempoQueObstaculo1Aparece;
+    private float velocidadeDeslocamentoObstaculo1;
+
+
     //------------------- BTN PAUSE
     private AGSprite pause;
 
@@ -69,7 +78,7 @@ public class CenaPlay extends AGScene {
 
         //INICIALIZANDO ALGUMAS VARIAVEIS
         //-- cowboy
-        altruaMaxDoPulo = 0.45f;
+        altruaMaxDoPulo = 0.70f;
         pulando = false;
         chegouNaAlturaMax = false;
         //-- tiros
@@ -80,19 +89,25 @@ public class CenaPlay extends AGScene {
         passaro = null;
         posXPassaro = AGScreenManager.iScreenWidth;
         intervaloTempoQuePassaroAparece = 5000;
-        posXPassaro = AGScreenManager.iScreenWidth;
         velocidadeVooPassaro = 9;
+        //-- obstaculo1
+        obstaculo1 = null;
+        posXobstaculo1 = AGScreenManager.iScreenHeight;
+        intervaloTempoQueObstaculo1Aparece = 6000;
+        velocidadeDeslocamentoObstaculo1 = 20;
 
         //CARREGA BACKGROUND 1
         bg = createSprite(R.mipmap.b1, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
-        //CARREGA BACKGROUND 2
-        bg2 = createSprite(R.mipmap.b2, 1, 1);
-        bg2.setScreenPercent(200, 100);
-        bg2.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
-        bg2.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+        //CONFIGURA IMAGEM 1
+        backgroundCactos1 = createSprite(R.mipmap.b2, 1, 1);
+        backgroundCactos1.setScreenPercent(200, 100);
+        backgroundCactos1.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
+        backgroundCactos1.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+        //CONFIGURA IMAGEM 2
+        backgroundCactos2 = null;
 
         //CARREGA BTN PAUSE
         pause = createSprite(R.mipmap.pause, 1, 1);
@@ -101,6 +116,10 @@ public class CenaPlay extends AGScene {
         pause.vrPosition.setY(AGScreenManager.iScreenHeight * 0.90f);
 
         //CARREGA CAWBOY
+        carregaCowboy();
+    }
+
+    private void carregaCowboy() {
         cowboy = createSprite(R.mipmap.cowboy, 14, 1);
         cowboy.setScreenPercent(30, 50);
         posXCowboy = AGScreenManager.iScreenWidth * 0.15f;
@@ -122,6 +141,29 @@ public class CenaPlay extends AGScene {
         passaro.iMirror = AGSprite.HORIZONTAL;//espelhamento horizontal
         //ANIMACAO 0 -> VOANDO
         passaro.addAnimation(15, true, 0, 4);
+    }
+
+    private void carregaPassaroInimigo(float posX) {
+        passaro = createSprite(R.mipmap.passaro, 5, 1);
+        passaro.setScreenPercent(10, 10);
+        posXPassaro = AGScreenManager.iScreenWidth;
+        passaro.vrPosition.setX(posX);
+        passaro.vrPosition.setY(AGScreenManager.iScreenHeight * 0.35f);
+        passaro.iMirror = AGSprite.HORIZONTAL;//espelhamento horizontal
+        //ANIMACAO 0 -> VOANDO
+        passaro.addAnimation(15, true, 0, 4);
+    }
+
+
+    private void carregaObstaculo1() {
+        obstaculo1 = createSprite(R.mipmap.obstaculo1, 1, 1);
+        obstaculo1.setScreenPercent(10, 10);
+        posXobstaculo1 = AGScreenManager.iScreenWidth;
+        obstaculo1.vrPosition.setX(posXobstaculo1);
+        obstaculo1.vrPosition.setY(AGScreenManager.iScreenHeight * 0.10f);
+//        obstaculo1.iMirror = AGSprite.HORIZONTAL;//espelhamento horizontal
+        //ANIMACAO 0 -> VOANDO
+//        passaro.addAnimation(15, true, 0, 4);
     }
 
     private void CarregarTiro() {
@@ -166,6 +208,7 @@ public class CenaPlay extends AGScene {
     //APOS O RETORNO DE UMA INTERRUPCAO
     @Override
     public void restart() {
+//        backgroundCactos2 = null;
         this.init();
     }
 
@@ -176,23 +219,86 @@ public class CenaPlay extends AGScene {
     }
 
     long tempoInicioPassaro = System.currentTimeMillis();
+    long tempoInicioObstaculo1 = System.currentTimeMillis();
 
     //CHAMADO N VEZES POR SEGUNDO
     @Override
     public void loop() {
 
-        bg2.vrPosition.setX(bg2.vrPosition.getX() - 6);
-        if (bg2.vrPosition.getX() + (AGScreenManager.iScreenWidth / 10) <= 0){
-//            removeSprite(bg2);
-            bg2 = createSprite(R.mipmap.b2, 1, 1);
-            bg2.setScreenPercent(200, 100);
-            bg2.vrPosition.setX(AGScreenManager.iScreenWidth * 2 );
-            bg2.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+        /**
+         *
+         * INICIO
+         * DESLOCAMENTO DA IMAGEM DE FUNDO
+         *
+         * Foi usada duas imagens, quando uma esta chegando ao fim ela automaticamente chama a outra.
+         * Quando a que chamou desaparece, ela se auto elimina.
+         *
+         * **/
+        if (backgroundCactos1 != null) {
+            //DESLOCAMENTO DA IMAGEM 1
+            backgroundCactos1.vrPosition.setX(backgroundCactos1.vrPosition.getX() - velocidadeDeslocamentoObstaculo1);
+
+            //EU NAO SOU MAIS PRECISA
+            if (backgroundCactos1.vrPosition.getX() + AGScreenManager.iScreenWidth <= 0) {
+                if (backgroundCactos2 != null) {
+                    removeSprite(backgroundCactos1);
+                    backgroundCactos1 = null; // to na 111111
+                    return;
+                }
+            }
+
+            //PRECISO DA IMAGEM 2!! TO ACABANDO!!!
+            if (backgroundCactos1.vrPosition.getX() <= 0 && backgroundCactos2 == null) {
+                //CARREGA A 2
+                backgroundCactos2 = createSprite(R.mipmap.b2, 1, 1);
+                backgroundCactos2.setScreenPercent(200, 100);
+                backgroundCactos2.vrPosition.setX(backgroundCactos1.vrPosition.getX() + backgroundCactos1.getSpriteWidth() - 20);
+                backgroundCactos2.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+//                if (passaro != null) {
+//                    //RECARREGA PASSARO
+//                    removeSprite(passaro);
+//                    carregaPassaroInimigo(posXPassaro);
+//                }
+                //RECARREGA COWBOY
+                removeSprite(cowboy);
+                carregaCowboy();
+            }
         }
+        if (backgroundCactos2 != null) {
+            //DESLOCAMENTO DA IMAGEM 2
+            backgroundCactos2.vrPosition.setX(backgroundCactos2.vrPosition.getX() - velocidadeDeslocamentoObstaculo1);
+
+            //EU NAO SOU MAIS PRECISA
+            if (backgroundCactos2.vrPosition.getX() + AGScreenManager.iScreenWidth <= 0) {
+                if (backgroundCactos2 != null) {
+                    removeSprite(backgroundCactos2);
+                    backgroundCactos2 = null; // to na 22222
+                    return;
+                }
+            }
+
+            //PRECISO DA IMAGEM 1 !! TO ACABANDO !!!
+            if (backgroundCactos2.vrPosition.getX() <= 0 && backgroundCactos1 == null) {
+                //CARREGA A 1
+                backgroundCactos1 = createSprite(R.mipmap.b2, 1, 1);
+                backgroundCactos1.setScreenPercent(200, 100);
+                backgroundCactos1.vrPosition.setX(backgroundCactos2.vrPosition.getX() + backgroundCactos2.getSpriteWidth() - 20);
+                backgroundCactos1.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
+//                if (passaro != null) {
+//                    //RECARREGA PASSARO
+//                    removeSprite(passaro);
+//                    carregaPassaroInimigo(posXPassaro);
+//                }
+                //RECARREGA COWBOY
+                removeSprite(cowboy);
+                carregaCowboy();
+            }
+        }
+        /**FIM DO DESLOCAMENTO DO AMBIENTE */
+
 
         //COWBOY ESTA MORTO
-        if (!cowboy.fadeEnded()){
-//            AGSoundManager.vrSoundEffects.play(somGameOver);
+        if (!cowboy.fadeEnded()) {
             AGSoundManager.vrMusic.loadMusic("game_over.mp3", true);
             AGSoundManager.vrMusic.play();
             timeDead.update();
@@ -217,9 +323,19 @@ public class CenaPlay extends AGScene {
             }
         }
 
+        //CARREGA OBSTACULO1
+        if (obstaculo1 == null) {
+            //VERIFICO O INTERVALO
+            if ((System.currentTimeMillis() - tempoInicioObstaculo1) > intervaloTempoQueObstaculo1Aparece) {
+                carregaObstaculo1();
+                tempoInicioObstaculo1 = System.currentTimeMillis();
+            }
+        }
+
         //TERMINOU DE DAR O TIRO
-        if (cowboy.getCurrentAnimation().isAnimationEnded())
+        if (cowboy.getCurrentAnimation().isAnimationEnded()) {
             cowboy.setCurrentAnimation(0);
+        }
 
         //CLICOU NA TELA
         if (AGInputManager.vrTouchEvents.screenClicked()) {
@@ -250,11 +366,29 @@ public class CenaPlay extends AGScene {
                 chegouNaAlturaMax = true;
             }
 
-            //VERIFICA SE É PARA SUBIR OU PARA DESCER
+            //DETERMINA SE É PARA SUBIR OU PARA DESCER
             if (chegouNaAlturaMax == false) {
-                posYCowboy += 10;
+
+                //MAIS DA METADO DA ALTURA TOTAL DO PULO
+                if (posYCowboy >= AGScreenManager.iScreenHeight * (altruaMaxDoPulo / 2)) {
+                    posYCowboy += 20;
+                } else {
+                    //MENOS DA METADO DO PULO
+                    posYCowboy += 40;
+                }
+//                    posYCowboy += 40;
+
             } else {
-                posYCowboy -= 10;
+
+//                posYCowboy -= 40;
+
+                //MAIS DA METADO DA ALTURA TOTAL DO PULO
+                if (posYCowboy >= AGScreenManager.iScreenHeight * (altruaMaxDoPulo / 2)) {
+                    posYCowboy -= 20;
+                } else {
+                    //MENOS DA METADO DO PULO
+                    posYCowboy -= 40;
+                }
             }
 
             //VERIFICA VOLTOU AO CHAO
@@ -269,19 +403,37 @@ public class CenaPlay extends AGScene {
         if (passaro != null) {
             //PASSARO COLIDE COM COWBOY
             if (passaro.collide(cowboy)) {
-//                removeSprite(passaro);
-//                passaro = null;
-//                cowboy.setCurrentAnimation(1);
-//                AGSoundManager.vrSoundEffects.play(somGameOver);
-//                cowboy.fadeOut(600);
+                removeSprite(passaro);
+                passaro = null;
+                cowboy.setCurrentAnimation(1);
+                AGSoundManager.vrSoundEffects.play(somGameOver);
+                cowboy.fadeOut(600);
             } else {
+                //PASSARO CONTINUA VOANDO
                 posXPassaro -= velocidadeVooPassaro;
                 passaro.vrPosition.setX(posXPassaro);
             }
 
         }
 
-        //ANDAR TIROs
+
+        if (obstaculo1 != null) {
+            //OBSTACULO1 COLIDE COM COWBOY
+            if (obstaculo1.collide(cowboy)) {
+//                removeSprite(passaro);
+//                passaro = null;
+//                cowboy.setCurrentAnimation(1);
+//                AGSoundManager.vrSoundEffects.play(somGameOver);
+//                cowboy.fadeOut(600);
+            } else {
+                //OBSTACULO CONTINUA CORRENDO
+                posXobstaculo1 -= velocidadeDeslocamentoObstaculo1;
+                obstaculo1.vrPosition.setX(posXobstaculo1);
+            }
+
+        }
+
+        //DESLOCAMENTO DOS TIROS
         if (tiros.size() > 0) {
             //AUMENTA A POS_X DE CADA TIRO
             for (AGSprite tiro : tiros) {
