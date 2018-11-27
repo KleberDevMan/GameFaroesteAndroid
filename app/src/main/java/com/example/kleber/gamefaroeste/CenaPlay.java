@@ -35,6 +35,11 @@ public class CenaPlay extends AGScene {
     private AGSprite distintivo;
     private float posXDistintivo;
 
+    //------------------- VIDAS
+    private AGSprite coracao1;
+    private AGSprite coracao2;
+    private AGSprite coracao3;
+
     //------------------- COWBOY
     private AGSprite cowboy;
     private float posXCowboy;
@@ -55,6 +60,7 @@ public class CenaPlay extends AGScene {
     private int intervaloTempoQuePassaroAparece;
     private float velocidadeVooPassaro;
 
+    //
 
 
     //------------------- OBSTACULO1
@@ -133,6 +139,20 @@ public class CenaPlay extends AGScene {
         posXDistintivo = corda.vrPosition.getX() - corda.getSpriteWidth() / 2;
         distintivo.vrPosition.setX(posXDistintivo);
         distintivo.vrPosition.setY(AGScreenManager.iScreenHeight * 0.9f);
+
+        //CARREGA VIDAS
+        coracao1 = createSprite(R.mipmap.coracao, 1, 1);
+        coracao1.setScreenPercent(4, 4);
+        coracao1.vrPosition.setX(AGScreenManager.iScreenWidth * 0.95f);
+        coracao1.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
+        coracao2 = createSprite(R.mipmap.coracao, 1, 1);
+        coracao2.setScreenPercent(4, 4);
+        coracao2.vrPosition.setX(AGScreenManager.iScreenWidth * 0.90f);
+        coracao2.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
+        coracao3= createSprite(R.mipmap.coracao, 1, 1);
+        coracao3.setScreenPercent(4, 4);
+        coracao3.vrPosition.setX(AGScreenManager.iScreenWidth * 0.85f);
+        coracao3.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
 
         //CARREGA BTN PAUSE
         pause = createSprite(R.mipmap.pause, 1, 1);
@@ -380,8 +400,10 @@ public class CenaPlay extends AGScene {
         if (passaro != null) {
             //PASSARO COLIDE COM COWBOY
             if (passaro.collide(cowboy)) {
-//                removeSprite(passaro);
-//                passaro = null;
+                removeSprite(passaro);
+                removeSprite(coracao3);
+                passaro = null;
+
 //                cowboy.setCurrentAnimation(1);
 //                AGSoundManager.vrSoundEffects.play(somGameOver);
 //                cowboy.fadeOut(600);
