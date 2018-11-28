@@ -7,16 +7,15 @@ import com.example.kleber.gamefaroeste.AndGraph.AGScene;
 import com.example.kleber.gamefaroeste.AndGraph.AGScreenManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGSoundManager;
 import com.example.kleber.gamefaroeste.AndGraph.AGSprite;
-import com.example.kleber.gamefaroeste.AndGraph.AGTimer;
 
 //UMA CENA DA APLICACAO
-public class CenaGameOver extends AGScene {
+public class CenaPause extends AGScene {
 
     AGSprite bg = null;
-    private AGSprite jogarNovamente = null;
+    private AGSprite play = null;
     private AGSprite irParaMenu = null;
 
-    public CenaGameOver(AGGameManager pManager) {
+    public CenaPause(AGGameManager pManager) {
         super(pManager);
     }
 
@@ -33,15 +32,15 @@ public class CenaGameOver extends AGScene {
         setSceneBackgroundColor(0.255f, 0, 0);
 
         //CARREGA BACKGROUND
-        bg = createSprite(R.mipmap.game_over, 1, 1);
+        bg = createSprite(R.mipmap.tela_pause, 1, 1);
         bg.setScreenPercent(100, 100);
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
 
-        jogarNovamente = createSprite(R.mipmap.play_again, 1, 1);
-        jogarNovamente.setScreenPercent(30, 30);
-        jogarNovamente.vrPosition.setX(AGScreenManager.iScreenWidth * 0.35f);
-        jogarNovamente.vrPosition.setY(AGScreenManager.iScreenHeight * 0.3f);
+        play = createSprite(R.mipmap.play_again, 1, 1);
+        play.setScreenPercent(30, 30);
+        play.vrPosition.setX(AGScreenManager.iScreenWidth * 0.35f);
+        play.vrPosition.setY(AGScreenManager.iScreenHeight * 0.3f);
 
         irParaMenu = createSprite(R.mipmap.home, 1, 1);
         irParaMenu.setScreenPercent(30, 30);
@@ -69,7 +68,7 @@ public class CenaGameOver extends AGScene {
                 return;
             }
 
-            if (jogarNovamente.collide(AGInputManager.vrTouchEvents.getLastPosition())) {
+            if (play.collide(AGInputManager.vrTouchEvents.getLastPosition())) {
                 vrGameManager.setCurrentScene(2);
                 return;
             }

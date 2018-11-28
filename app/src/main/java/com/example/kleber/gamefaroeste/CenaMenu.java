@@ -14,6 +14,7 @@ public class CenaMenu extends AGScene {
     private AGSprite play = null;
     private AGSprite sobre = null;
     private AGSprite sair = null;
+    private int efeitoSonoro1 = 0;
 
     public CenaMenu(AGGameManager pManager) {
         super(pManager);
@@ -33,12 +34,6 @@ public class CenaMenu extends AGScene {
         bg.vrPosition.setX(AGScreenManager.iScreenWidth / 2);
         bg.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
 
-        //CARREGA LOGO
-        AGSprite logo = createSprite(R.mipmap.logo, 1, 1);
-        logo.setScreenPercent(55, 45);
-        logo.vrPosition.setX(AGScreenManager.iScreenWidth / 1.5f);
-        logo.vrPosition.setY(AGScreenManager.iScreenHeight * 0.8f);
-
         play = createSprite(R.mipmap.btn_play, 1, 1);
         play.setScreenPercent(25, 15);
         play.vrPosition.setX(AGScreenManager.iScreenWidth * 0.7f);
@@ -53,6 +48,9 @@ public class CenaMenu extends AGScene {
         sair.setScreenPercent(25, 15);
         sair.vrPosition.setX(AGScreenManager.iScreenWidth * 0.7f);
         sair.vrPosition.setY(AGScreenManager.iScreenHeight * 0.1f);
+
+        //Carrega um efeito sonoro
+        efeitoSonoro1 = AGSoundManager.vrSoundEffects.loadSoundEffect("toc.wav");
     }
 
     //APOS O RETORNO DE UMA INTERRUPCAO
@@ -70,22 +68,28 @@ public class CenaMenu extends AGScene {
     //CHAMADO N VEZES POR SEGUNDO
     @Override
     public void loop() {
-        if (AGInputManager.vrTouchEvents.screenClicked()) {
 
+        if (AGInputManager.vrTouchEvents.screenClicked()) {
             if (play.collide(AGInputManager.vrTouchEvents.getLastPosition())){
+                AGSoundManager.vrSoundEffects.play(efeitoSonoro1);
                 vrGameManager.setCurrentScene(2);
                 return;
             }
 
             if (sobre.collide(AGInputManager.vrTouchEvents.getLastPosition())){
+                AGSoundManager.vrSoundEffects.play(efeitoSonoro1);
                 vrGameManager.setCurrentScene(3);
                 return;
             }
 
             if (sair.collide(AGInputManager.vrTouchEvents.getLastPosition())){
+                AGSoundManager.vrSoundEffects.play(efeitoSonoro1);
                 vrGameManager.vrActivity.finish();
                 return;
             }
         }
+
+
+
     }
 }
