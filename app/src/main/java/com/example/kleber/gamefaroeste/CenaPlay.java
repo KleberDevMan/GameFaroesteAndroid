@@ -85,7 +85,6 @@ public class CenaPlay extends AGScene {
     //SEMPRE QUE A CENA FOR EXIBIDA
     @Override
     public void init() {
-
         //COLOCO SOM DE TOQUE NA MEMORIA
         somToqueNaTela = AGSoundManager.vrSoundEffects.loadSoundEffect("toc.wav");
         somTiro = AGSoundManager.vrSoundEffects.loadSoundEffect("tiro.mp3");
@@ -226,7 +225,7 @@ public class CenaPlay extends AGScene {
 
         AGSprite tiro = null;
 
-        if (podeAtirar()){
+        if (podeAtirar()) {
             tiro = criaSpriteTiro();
             tiros.add(tiro);
         }
@@ -280,14 +279,21 @@ public class CenaPlay extends AGScene {
     long tempoInicioPassaro = System.currentTimeMillis();
     long tempoInicioObstaculo1 = System.currentTimeMillis();
 
+
     //CHAMADO N VEZES POR SEGUNDO
     @Override
     public void loop() {
 
+        //AUMENTA A VELOCIDADE DO CENARIO
+        velocidadeMovimentacaoCenario += 0.005;
+
+        //AUMENTA A VELOCIDADE DO PASSARO INIMIGO
+        velocidadeVooPassaro += 0.05;
+
         //VERIFICA SE TEM BALA DISPONIVEL PARA ATIRAR
-        if (podeAtirar()){
+        if (podeAtirar()) {
             indicadorBalaDisponivel.bVisible = true;
-        }else{
+        } else {
             indicadorBalaDisponivel.bVisible = false;
         }
 
@@ -307,6 +313,7 @@ public class CenaPlay extends AGScene {
 
         //APERTOU O BTN PAUSE
         if (pause.collide(AGInputManager.vrTouchEvents.getLastPosition())) {
+            AGSoundManager.vrSoundEffects.play(somToqueNaTela);
             vrGameManager.setCurrentScene(5);
             return;
         }
@@ -315,6 +322,7 @@ public class CenaPlay extends AGScene {
         if (passaro == null) {
             //VERIFICO O INTERVALO
             if ((System.currentTimeMillis() - tempoInicioPassaro) > intervaloTempoQuePassaroAparece) {
+                AGSoundManager.vrSoundEffects.play(somCorvo);
                 carregaPassaroInimigo();
                 tempoInicioPassaro = System.currentTimeMillis();
             }
@@ -342,10 +350,10 @@ public class CenaPlay extends AGScene {
 
             //CLICOU NA DIREITA
             if (b > a) {
-                AGSoundManager.vrSoundEffects.play(somTiro);
                 //ANIMACAO: CAWBOY ATIRANDO
                 CarregarTiro();
                 if (tiroRegistrado) {
+                    AGSoundManager.vrSoundEffects.play(somTiro);
                     cowboy.setCurrentAnimation(1);
                     tiroRegistrado = false;
                 }
@@ -485,6 +493,7 @@ public class CenaPlay extends AGScene {
             backgroundEmMovimento1.vrPosition.setY(AGScreenManager.iScreenHeight / 2);
         }
     }
+
 
 }
 

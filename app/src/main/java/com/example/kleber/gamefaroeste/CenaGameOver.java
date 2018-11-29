@@ -15,6 +15,7 @@ public class CenaGameOver extends AGScene {
     AGSprite bg = null;
     private AGSprite jogarNovamente = null;
     private AGSprite irParaMenu = null;
+    private int somToqueNaTela;
 
     public CenaGameOver(AGGameManager pManager) {
         super(pManager);
@@ -24,6 +25,9 @@ public class CenaGameOver extends AGScene {
     //SEMPRE QUE A CENA FOR EXIBIDA
     @Override
     public void init() {
+
+        //CARREGA EFEITOS SONOROS
+        somToqueNaTela = AGSoundManager.vrSoundEffects.loadSoundEffect("toc.wav");
 
         //MUSICA
         AGSoundManager.vrMusic.loadMusic("music_game_over.mp3", true);
@@ -65,11 +69,13 @@ public class CenaGameOver extends AGScene {
 
         if (AGInputManager.vrTouchEvents.screenClicked()) {
             if (irParaMenu.collide(AGInputManager.vrTouchEvents.getLastPosition())) {
+                AGSoundManager.vrSoundEffects.play(somToqueNaTela);
                 vrGameManager.setCurrentScene(1);
                 return;
             }
 
             if (jogarNovamente.collide(AGInputManager.vrTouchEvents.getLastPosition())) {
+                AGSoundManager.vrSoundEffects.play(somToqueNaTela);
                 vrGameManager.setCurrentScene(2);
                 return;
             }
